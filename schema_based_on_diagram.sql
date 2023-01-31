@@ -3,13 +3,14 @@ CREATE DATABASE medical;
 CREATE TABLE patients ( 
     id INT GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(250),
+    date_of_birth DATE NOT NULL, 
     PRIMARY KEY(id)
 );
 
 CREATE TABLE medical_histories ( 
     id INT GENERATED ALWAYS AS IDENTITY,
     admitted_at TIMESTAMP,
-    patient_at INT REFERENCES patients(id),
+    patient_id INT REFERENCES patients(id),
     status VARCHAR(250),
     PRIMARY KEY(id)
 );
@@ -41,10 +42,19 @@ CREATE TABLE invoice_items (
 );
 
 -- Many to many relationship table--
-CREATE TABLE medical_histories_treatment ( medical_histories_id INT, treatment_id INT);
-ALTER TABLE medical_histories_treatment ADD CONSTRAINT medical_histories_fkey FOREIGN KEY (medical_histories_id) REFERENCES medical_histories(id);
-ALTER TABLE medical_histories_treatment ADD CONSTRAINT treatment_fkey FOREIGN KEY (treatment_id) REFERENCES treatment(id);
+CREATE TABLE medical_histories_treatment ( medical_histories_id INT, treatment_id INT, PRIMARY KEY(id));
+ALTER TABLE medical_histories_treatment 
+ADD CONSTRAINT medical_histories_fkey 
+FOREIGN KEY (medical_histories_id) 
+REFERENCES medical_histories(id);
 
+ALTER TABLE medical_histories_treatment 
+ADD CONSTRAINT treatment_fkey 
+FOREIGN KEY (treatment_id) REFERENCES treatment(id);
+
+---PERFORMANCE IMPROVEMENT---
+CREATE index medical_histories_id_index ON medical_histories_treatment (medical_histories_id);
+CREATE index medical_histories_id_index ON medical_histories_treatment (treatment_id);
 
 
 
