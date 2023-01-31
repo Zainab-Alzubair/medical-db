@@ -9,7 +9,7 @@ CREATE TABLE patients (
 CREATE TABLE medical_histories ( 
     id INT GENERATED ALWAYS AS IDENTITY,
     admitted_at TIMESTAMP,
-    patient_at INT , 
+    patient_at INT REFERENCES patients(id),
     status VARCHAR(250),
     PRIMARY KEY(id)
 );
@@ -26,7 +26,7 @@ CREATE TABLE invoices (
     total_amount decimal,
     generated_at TIMESTAMP,
     payed_at TIMESTAMP,
-    medical_history_id INT,
+    medical_history_id INT REFERENCES medical_histories(id),
     PRIMARY KEY(id)
 );
 
@@ -35,10 +35,17 @@ CREATE TABLE invoice_items (
     unit_price decimal,
     quantity INT,
     total_price decimal,
-    invoice_id INT,
-    treatment_id INT,
+    invoice_id INT REFERENCES invoices(id),
+    treatment_id INT REFERENCES treatments(id),
     PRIMARY KEY(id)
 );
+
+-- Many to many relationship table--
+CREATE TABLE medical_histories_treatment ( medical_histories_id INT, treatment_id INT);
+ALTER TABLE medical_histories_treatment ADD CONSTRAINT medical_histories_fkey FOREIGN KEY (medical_histories_id) REFERENCES medical_histories(id);
+ALTER TABLE medical_histories_treatment ADD CONSTRAINT treatment_fkey FOREIGN KEY (treatment_id) REFERENCES treatment(id);
+
+
 
 
 
